@@ -163,7 +163,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px 0 70px
 <div class="topbar">
   <div class="fila">
     <div class="info">
-      <div class="pasoTxt" id="pasoTxt">Paso 1 de 8</div>
+      <div class="pasoTxt" id="pasoTxt">Paso 1 de 9</div>
       <div class="barra"><i id="barraIn"></i></div>
     </div>
     <button type="button" id="calcBtn" aria-expanded="false" aria-controls="calc">🧮 <span class="txt">Calculadora</span></button>
@@ -237,7 +237,7 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px 0 70px
 <!-- PASO 4 -->
 <section class="card paso" data-titulo="Apuntes: las cuentas">
   <h2>📖 Apuntes 3 · Las cuentas del presupuesto</h2>
-  <div class="tarea"><b>📌 Qué tienes que hacer:</b> lee las cuentas en orden. Las usarás hoy en la actividad 2 y el próximo día, en la libreta, para hacer un presupuesto completo. Prueba los ejemplos con la calculadora.</div>
+  <div class="tarea"><b>📌 Qué tienes que hacer:</b> lee las cuentas en orden. Son las que vas a usar en las actividades 2 y 3. Prueba los ejemplos con la calculadora.</div>
   <p><span class="formula">① Precio total = Cantidad × Precio unitario</span><br>
   <small>Ej.: 4 dm² × 0,06 €/dm² = 0,24 €</small></p>
   <p><span class="formula">② Mano de obra = Horas de trabajo × Precio por hora</span><br>
@@ -285,6 +285,24 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px 0 70px
 </section>
 
 <!-- PASO 7 -->
+<section class="card paso" data-titulo="Actividad 3: la hoja" id="act3">
+  <h2>📝 Actividad 3 · Completa la hoja de presupuesto</h2>
+  <div class="tarea"><b>📌 Qué tienes que hacer:</b> tu equipo va a fabricar <b id="proyNombre"></b>. La lista de materiales ya está hecha, pero <b>faltan las cuentas</b>. Rellena las casillas naranjas <b>en orden, de arriba abajo</b>. La primera fila ya está hecha como ejemplo. Al terminar, pulsa <b>✅ Comprobar</b>.</div>
+  <div class="tablewrap">
+  <table class="pres">
+    <thead><tr><th>N.º</th><th>Cantidad</th><th>Material</th><th>Precio unitario</th><th>Precio total</th></tr></thead>
+    <tbody id="hojaBody"></tbody>
+  </table>
+  </div>
+  <div class="nota">🧮 ¿Necesitas hacer cuentas? <button type="button" class="inlineCalc" data-calc>🧮 Abrir calculadora</button> &nbsp;✏️ Escribe los números con coma o con punto (1,50 o 1.50). No hace falta poner €.</div>
+  <details class="pista"><summary>💡 Pista 1 · Precio total de cada fila</summary>Multiplica la <b>cantidad</b> por el <b>precio unitario</b>. Si la cantidad es ¼ de envase, multiplica por 0,25; si es ½, por 0,5.</details>
+  <details class="pista"><summary>💡 Pista 2 · Mano de obra</summary>Es una fila más: multiplica las <b>horas</b> por el <b>precio por hora</b>.</details>
+  <details class="pista"><summary>💡 Pista 3 · Total sin IVA</summary>Suma <b>todos</b> los precios totales de la columna de la derecha (también la fila 1 y la mano de obra).</details>
+  <details class="pista"><summary>💡 Pista 4 · IVA y TOTAL</summary>IVA = total sin IVA × <b>0,21</b> (redondea a dos decimales). TOTAL = total sin IVA + IVA.</details>
+  <button class="btn" id="btn3">✅ Comprobar</button><span id="res3"></span>
+</section>
+
+<!-- PASO 8 -->
 <section class="card paso" data-titulo="Explícalo tú">
   <h2>💬 Para terminar · Explícalo con tus palabras</h2>
   <div class="tarea"><b>📌 Qué tienes que hacer:</b> responde en 2 o 3 frases. Esta pregunta no se corrige sola: la leerá el profesor en tu PDF.</div>
@@ -292,10 +310,9 @@ footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px 0 70px
   <textarea id="reflex" rows="4" placeholder="El presupuesto sirve para… Si sale caro, yo…"></textarea>
 </section>
 
-<!-- PASO 8 -->
+<!-- PASO 9 -->
 <section class="card final paso" data-titulo="Tu PDF" id="fin">
   <h2>📄 Genera tu PDF y súbelo a Classroom</h2>
-  <div class="nota" style="text-align:left">📒 <b>El próximo día:</b> sin ordenadores, harás en tu <b>libreta</b> el presupuesto completo de un proyecto (materiales, mano de obra, IVA y ganancia). Repasa estos apuntes en casa.</div>
   <ul class="checklist" id="checklist"></ul>
   <div class="nota-final" id="notaFinal">– / 10</div>
   <button class="btn big" id="btnPDF">📄 Generar PDF</button>
@@ -411,8 +428,8 @@ document.querySelectorAll('#tablaEjemplo th.clic').forEach(th=>{
 });
 
 /* ---------- Estado de actividades ---------- */
-const estado = {1:{score:null,intentos:0},2:{score:null,intentos:0}};
-const pesos = {1:5, 2:5}; // suman 10
+const estado = {1:{score:null,intentos:0},2:{score:null,intentos:0},3:{score:null,intentos:0}};
+const pesos = {1:3, 2:3, 3:4}; // suman 10
 function marca(el, s){ el.className='resultado '+(s>=0.999?'ok':(s>=0.5?'med':'ko')); }
 
 /* ---------- Actividad 1: Test ---------- */
@@ -478,6 +495,74 @@ $('btn2').addEventListener('click', ()=>{
   updateNav();
 });
 
+/* ---------- Actividad 3: Hoja de presupuesto aleatoria ---------- */
+const MO = ['Mano de obra', [1,2,3], 'h', [4,5,6], '€/hora'];
+const PROYECTOS = [
+  {nombre:'un sistema de riego por goteo', mats:[
+    ['Tableros de contrachapado',[1,2],'uds.',[1.20,1.50],'€/unidad'],
+    ['Tubo de goteo',[50,80,100],'cm',[0.002,0.004],'€/cm'],
+    ['Envase de cola de carpintero',[0.25,0.5],'envase',[1.20,1.60],'€/envase'],
+    ['Plancha de cartón ondulado',[4,6,8],'dm²',[0.05,0.06],'€/dm²'],
+    ['Bridas de plástico',[4,6,8],'uds.',[0.05,0.10],'€/unidad'] ]},
+  {nombre:'una lámpara de mesa', mats:[
+    ['Tablero de DM',[6,8,10],'dm²',[0.08,0.10,0.12],'€/dm²'],
+    ['Cable eléctrico',[100,150,200],'cm',[0.002,0.004],'€/cm'],
+    ['Portalámparas',[1],'uds.',[0.80,1.20],'€/unidad'],
+    ['Interruptor',[1],'uds.',[0.60,0.90],'€/unidad'],
+    ['Envase de cola de carpintero',[0.25,0.5],'envase',[1.20,1.60],'€/envase'] ]},
+  {nombre:'un puente de palillos', mats:[
+    ['Palillos de madera',[50,80,100],'uds.',[0.01,0.02],'€/unidad'],
+    ['Envase de cola blanca',[0.5,0.75],'envase',[1.00,1.40],'€/envase'],
+    ['Plancha de cartón ondulado',[4,5,6],'dm²',[0.05,0.06],'€/dm²'],
+    ['Cordel',[100,200],'cm',[0.001,0.002],'€/cm'],
+    ['Envase de pintura acrílica',[0.25,0.5],'envase',[2.00,2.40],'€/envase'] ]},
+  {nombre:'un organizador de escritorio', mats:[
+    ['Tablero de contrachapado',[10,12,15],'dm²',[0.08,0.10],'€/dm²'],
+    ['Listón de madera',[60,80,100],'cm',[0.01,0.015],'€/cm'],
+    ['Puntas',[10,20],'uds.',[0.01,0.02],'€/unidad'],
+    ['Envase de cola de carpintero',[0.25,0.5],'envase',[1.20,1.60],'€/envase'],
+    ['Envase de barniz',[0.25,0.5],'envase',[3.00,4.00],'€/envase'] ]}
+];
+const proy = pick(PROYECTOS);
+$('proyNombre').textContent = proy.nombre;
+const filas = proy.mats.concat([MO]).map(m=>{ const cant=pick(m[1]); const pu=pick(m[3]); return {mat:m[0], ud:m[2], pud:m[4], cant, pu, pt:r2(cant*pu), mo:m===MO}; });
+const SUB = r2(filas.reduce((a,f)=>a+f.pt,0));
+const IVA = r2(SUB*0.21);
+const TOT = r2(SUB+IVA);
+(function pintaHoja(){
+  let h='';
+  filas.forEach((f,i)=>{
+    const cel = i===0 ? `<b>${fmt(f.pt)}</b><br><small style="color:var(--ok)">✏️ Ejemplo: ${String(f.cant).replace('.',',')} × ${fmtPU(f.pu)}</small>`
+                      : `<input type="text" class="celda" id="h${i}" inputmode="decimal" placeholder="?" aria-label="Precio total fila ${i+1}">`;
+    const nom = f.mo ? `<b>Mano de obra</b> <small>(horas de trabajo)</small>` : f.mat;
+    h += `<tr${f.mo?' style="background:#fff6dc"':''}><td>${i+1}</td><td>${fmtCant(f.cant,f.ud)}</td><td>${nom}</td><td class="num">${fmtPU(f.pu)} ${f.pud}</td><td class="num">${cel}</td></tr>`;
+  });
+  h += `<tr class="res"><td colspan="4" style="text-align:right">Total sin IVA <small>(suma de la columna)</small></td><td class="num"><input type="text" class="celda" id="hSub" inputmode="decimal" placeholder="?"></td></tr>
+        <tr class="res"><td colspan="4" style="text-align:right">IVA (21 %) <small>(total sin IVA × 0,21)</small></td><td class="num"><input type="text" class="celda" id="hIva" inputmode="decimal" placeholder="?"></td></tr>
+        <tr class="res"><td colspan="4" style="text-align:right;color:var(--acc)">TOTAL <small>(sin IVA + IVA)</small></td><td class="num"><input type="text" class="celda" id="hTot" inputmode="decimal" placeholder="?"></td></tr>`;
+  $('hojaBody').innerHTML = h;
+})();
+const huecos3 = [];
+filas.forEach((f,i)=>{ if(i>0) huecos3.push({id:'h'+i, etiqueta:`Fila ${i+1}: ${f.mat} (${String(f.cant).replace('.',',')} × ${fmtPU(f.pu)})`, ok:f.pt, tol:0.011}); });
+huecos3.push({id:'hSub', etiqueta:'Total sin IVA', ok:SUB, tol:0.011});
+huecos3.push({id:'hIva', etiqueta:'IVA (21 %)', ok:IVA, tol:0.021});
+huecos3.push({id:'hTot', etiqueta:'TOTAL', ok:TOT, tol:0.021});
+$('btn3').addEventListener('click', ()=>{
+  let ok=0, resp=0;
+  huecos3.forEach(hc=>{
+    const el=$(hc.id); const v=parseNum(el.value); hc.resp = el.value.trim();
+    if(el.value.trim()===''){ el.className='celda'; return; }
+    resp++;
+    if(near(v,hc.ok,hc.tol)){ ok++; el.className='celda ok'; } else el.className='celda ko';
+  });
+  if(resp===0) return;
+  estado[3].intentos++; estado[3].score = ok/huecos3.length; estado[3].det = ok+' de '+huecos3.length;
+  let msg = `${ok} de ${huecos3.length} casillas bien · intento ${estado[3].intentos}`;
+  if(ok<huecos3.length) msg += ' · Revisa las rojas (abre las pistas 💡)';
+  $('res3').textContent = msg; marca($('res3'), estado[3].score);
+  updateNav();
+});
+
 /* ---------- Navegación, checklist y nota ---------- */
 function nota(){ let n=0; for(const k in estado){ n += (estado[k].score||0)*pesos[k]; } return Math.round(n*10)/10; }
 function updateNav(){
@@ -486,6 +571,7 @@ function updateNav(){
     [nom && gr, 'Nombre y grupo escritos'],
     [estado[1].intentos>0, 'Actividad 1 comprobada'],
     [estado[2].intentos>0, 'Actividad 2 comprobada'],
+    [estado[3].intentos>0, 'Actividad 3 comprobada'],
     [$('reflex').value.trim().length>=15, 'Pregunta final respondida']
   ];
   $('checklist').innerHTML = items.map(i=>`<li>${i[0]?'✅':'⬜'} ${i[1]}</li>`).join('');
@@ -507,14 +593,16 @@ $('btnPDF').addEventListener('click', ()=>{
   let h = `<div class="cab"><h1>El presupuesto · Ficha de actividades</h1>
     Tecnología y Digitalización 3º ESO · Unidad 1: Planificación de proyectos<br>
     <b>Alumno/a:</b> ${esc(nom)} &nbsp; · &nbsp; <b>Grupo:</b> ${esc(gr)}<br>
-    <b>Fecha:</b> ${fecha} &nbsp; · &nbsp; <b>Código de ficha:</b> ${seed}<br>
+    <b>Fecha:</b> ${fecha} &nbsp; · &nbsp; <b>Código de ficha:</b> ${seed} &nbsp; · &nbsp; <b>Proyecto:</b> ${proy.nombre}<br>
     <b style="font-size:13pt">NOTA: ${nota().toString().replace('.',',')} / 10</b></div>
     <table><tr><th>Actividad</th><th>Aciertos</th><th>Intentos</th><th>Puntos</th></tr>
-    ${fila(1,'1. Test')}${fila(2,'2. Coste del tablero')}</table>`;
+    ${fila(1,'1. Test')}${fila(2,'2. Coste del tablero')}${fila(3,'3. Hoja de presupuesto')}</table>`;
   h += `<h2>1. Test</h2><table><tr><th>Pregunta</th><th>Tu respuesta</th><th></th></tr>`+
     preguntas.map(p=>`<tr><td>${p.q}</td><td>${p.resp?esc(p.resp):'—'}</td><td>${ico(p.resp===p.ok)}</td></tr>`).join('')+`</table>`;
   h += `<h2>2. Coste del tablero (${TAB.a} cm × ${TAB.b} cm a ${fmtPU(TAB.p)} €/dm²)</h2><table><tr><th>Casilla</th><th>Tu respuesta</th><th>Correcta</th><th></th></tr>`+
     huecos2.map(hc=>`<tr><td>${hc.etiqueta}</td><td>${hc.resp?esc(hc.resp)+' '+hc.u:'—'}</td><td>${String(hc.ok).replace('.',',')} ${hc.u}</td><td>${ico(near(parseNum(hc.resp),hc.ok,hc.tol))}</td></tr>`).join('')+`</table>`;
+  h += `<h2>3. Hoja de presupuesto</h2><table><tr><th>Casilla</th><th>Tu respuesta</th><th>Correcta</th><th></th></tr>`+
+    huecos3.map(hc=>{ const v=parseNum(hc.resp); return `<tr><td>${hc.etiqueta}</td><td>${hc.resp?esc(hc.resp)+' €':'—'}</td><td>${fmt(hc.ok)}</td><td>${ico(near(v,hc.ok,hc.tol))}</td></tr>`; }).join('')+`</table>`;
   h += `<h2>Para terminar · ¿Para qué sirve el presupuesto? ¿Qué harías si sale caro?</h2><div style="border:1px solid #999;padding:8px;min-height:50px;white-space:pre-wrap">${esc($('reflex').value.trim())}</div>
     <p style="font-size:9pt;color:#555;margin-top:10px">Pregunta de reflexión pendiente de valorar por el profesor.</p>`;
   $('informe').innerHTML = h;
@@ -569,6 +657,7 @@ function puedeAvanzar(){
   }
   if(id==='act1' && estado[1].intentos===0) return 'Primero contesta las preguntas y pulsa el botón ✅ Comprobar.';
   if(id==='act2' && estado[2].intentos===0) return 'Primero rellena las 3 casillas naranjas y pulsa el botón ✅ Comprobar.';
+  if(id==='act3' && estado[3].intentos===0) return 'Primero rellena las casillas naranjas y pulsa el botón ✅ Comprobar.';
   if(pasos[actual].querySelector('#reflex') && $('reflex').value.trim().length<15){ $('reflex').focus(); return 'Escribe tu respuesta (2 o 3 frases) antes de seguir.'; }
   return '';
 }
